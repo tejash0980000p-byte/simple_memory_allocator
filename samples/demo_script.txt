@@ -1,0 +1,26 @@
+alloc 100
+alloc 300
+alloc 150
+alloc 500
+map
+free 2
+free 4
+bar
+stats
+strategy best
+alloc 140
+free 1
+free 3
+bar
+stats
+alloc 16
+overflow 5
+check
+alloc 16
+tamper-free 5
+reset
+alloc 64
+tamper-free 1
+check
+leaks
+quit

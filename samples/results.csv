@@ -1,0 +1,16 @@
+workload,allocator,time_ms,failed,peak_kb,free_blocks,ext_frag_pct,largest_free_kb
+sequential,first-fit,0.671,0,1250,1,0.00,2220
+sequential,next-fit,0.615,0,1250,1,0.00,2220
+sequential,best-fit,0.564,0,1250,1,0.00,2220
+sequential,worst-fit,0.600,0,1250,1,0.00,2220
+sequential,libc malloc,1.323,0,0,0,0,0
+churn,first-fit,36.223,0,563,293,1.40,7561
+churn,next-fit,4.354,0,558,481,71.04,2220
+churn,best-fit,33.716,0,563,147,1.08,7589
+churn,worst-fit,187.331,0,558,494,92.53,572
+churn,libc malloc,3.028,0,0,0,0,0
+phased,first-fit,2.273,0,320,138,10.48,1675
+phased,next-fit,3.221,0,318,142,57.88,788
+phased,best-fit,5.129,0,320,130,10.29,1679
+phased,worst-fit,12.772,0,318,139,89.67,193
+phased,libc malloc,1.601,0,0,0,0,0

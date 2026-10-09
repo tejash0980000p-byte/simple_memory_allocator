@@ -1,0 +1,5 @@
+bin/
+results.csv
+*.png
+!samples/*.png
+*.o

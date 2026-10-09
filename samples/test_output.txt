@@ -1,0 +1,71 @@
+=========== Custom Memory Allocator - Test Suite ===========
+
+== Basic allocation, alignment, data integrity ==
+  [PASS] three allocations succeed
+  [PASS] all pointers are 16-byte aligned
+  [PASS] blocks do not overlap (data intact)
+  [PASS] malloc(0) returns NULL
+  [PASS] usable size >= requested size
+  [PASS] heap invariants hold
+
+== Splitting and reuse of freed memory ==
+  [PASS] fresh heap = one big free block
+  [PASS] allocation splits the big block in two
+  [PASS] freed block is reused for the same-size request
+  [PASS] heap invariants hold
+
+== Coalescing of neighbouring free blocks ==
+  [PASS] free order forward      -> heap collapses to ONE free block
+  [PASS] whole heap usable again after coalescing
+  [PASS] free order backward     -> heap collapses to ONE free block
+  [PASS] whole heap usable again after coalescing
+  [PASS] free order middle-first -> heap collapses to ONE free block
+  [PASS] whole heap usable again after coalescing
+
+== Error detection (double free, invalid pointer, OOM) ==
+  [PASS] double free is detected and ignored
+  [PASS] free() of a foreign pointer is detected
+  [PASS] free(NULL) is a harmless no-op
+  [PASS] request larger than heap returns NULL
+  [PASS] huge size_t request does not overflow
+  [PASS] calloc multiplication overflow caught
+  [PASS] heap still healthy after misuse
+  [PASS] allocator hands out blocks until the heap is full
+  [PASS] returns NULL (not crash) when out of memory
+  [PASS] buffer overflow into next header is detected
+  [PASS] corrupted heap refuses further allocations
+
+== calloc / realloc ==
+  [PASS] calloc returns zeroed memory
+  [PASS] realloc grow preserves old data
+  [PASS] realloc shrink preserves data
+  [PASS] heap invariants hold after realloc
+  [PASS] realloc(NULL, n) behaves like malloc
+  [PASS] realloc(p, 0) behaves like free
+  [PASS] realloc grows in place when next block is free
+  [PASS] heap invariants hold
+
+== Placement strategies behave as defined ==
+  [PASS] first-fit picks the FIRST hole that fits (300-byte hole)
+  [PASS] heap invariants hold
+  [PASS] next-fit  picks the FIRST hole that fits (300-byte hole)
+  [PASS] next-fit resumes searching after the previous allocation
+  [PASS] heap invariants hold
+  [PASS] best-fit  picks the TIGHTEST hole (150-byte hole)
+  [PASS] heap invariants hold
+  [PASS] worst-fit picks the LARGEST hole (500-byte hole)
+  [PASS] heap invariants hold
+
+== Randomised stress test (all strategies) ==
+  [PASS] first-fit: 30000 random ops, no data corruption
+  [PASS] after freeing everything the heap is ONE free block again
+  [PASS] next-fit : 30000 random ops, no data corruption
+  [PASS] after freeing everything the heap is ONE free block again
+  [PASS] best-fit : 30000 random ops, no data corruption
+  [PASS] after freeing everything the heap is ONE free block again
+  [PASS] worst-fit: 30000 random ops, no data corruption
+  [PASS] after freeing everything the heap is ONE free block again
+
+=============================================================
+ RESULT: 52 passed, 0 failed
+=============================================================

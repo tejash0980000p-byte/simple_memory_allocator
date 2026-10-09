@@ -1,0 +1,37 @@
+==================== Allocator benchmark ====================
+
+Workload: sequential (heap = 4096 KB, best of 3 runs)
+  allocator     time(ms)   failed   peak(KB)   free blks   frag(%)  largest(KB)
+  ------------ ---------   ------   --------   ---------   -------  -----------
+  first-fit         0.67        0       1250           1       0.0         2220
+  next-fit          0.62        0       1250           1       0.0         2220
+  best-fit          0.56        0       1250           1       0.0         2220
+  worst-fit         0.60        0       1250           1       0.0         2220
+  libc malloc       1.32        0          -           -         -            -
+
+Workload: churn      (heap = 8192 KB, best of 3 runs)
+  allocator     time(ms)   failed   peak(KB)   free blks   frag(%)  largest(KB)
+  ------------ ---------   ------   --------   ---------   -------  -----------
+  first-fit        36.22        0        563         293       1.4         7561
+  next-fit          4.35        0        558         481      71.0         2220
+  best-fit         33.72        0        563         147       1.1         7589
+  worst-fit       187.33        0        558         494      92.5          572
+  libc malloc       3.03        0          -           -         -            -
+
+Workload: phased     (heap = 2048 KB, best of 3 runs)
+  allocator     time(ms)   failed   peak(KB)   free blks   frag(%)  largest(KB)
+  ------------ ---------   ------   --------   ---------   -------  -----------
+  first-fit         2.27        0        320         138      10.5         1675
+  next-fit          3.22        0        318         142      57.9          788
+  best-fit          5.13        0        320         130      10.3         1679
+  worst-fit        12.77        0        318         139      89.7          193
+  libc malloc       1.60        0          -           -         -            -
+
+How to read this:
+  failed  = requests that returned NULL although memory may have been free (fragmentation!)
+  frag %  = 100 * (1 - largest_free_block / total_free_bytes) at the end of the workload
+  Our allocator walks a free list (cost grows with the number of FREE blocks); libc uses
+  size-class bins + thread caches, so it stays faster when the heap is badly fragmented.
+  worst-fit is slowest AND most fragmented: it must scan every free block and shatters big holes.
+
+Saved: results.csv   (run 'make plot' for charts)

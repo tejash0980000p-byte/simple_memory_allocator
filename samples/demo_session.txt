@@ -1,0 +1,96 @@
+=== Custom Memory Allocator - interactive demo (heap 4096 bytes) ===
+Type 'help' for commands. Start with:  alloc 100   alloc 300   free 1
+
+  [................................................................]  # used  . free  + mixed
+>> alloc 100
+  id 1 -> offset 32, usable 112 bytes
+  [##+.............................................................]  # used  . free  + mixed
+>> alloc 300
+  id 2 -> offset 176, usable 304 bytes
+  [#######+........................................................]  # used  . free  + mixed
+>> alloc 150
+  id 3 -> offset 512, usable 160 bytes
+  [##########+.....................................................]  # used  . free  + mixed
+>> alloc 500
+  id 4 -> offset 704, usable 512 bytes
+  [###################.............................................]  # used  . free  + mixed
+>> map
+  #   offset      block size   payload   state
+  --  ----------  -----------  --------  -----
+  0   0x00000000  144          112       USED
+  1   0x00000090  336          304       USED
+  2   0x000001e0  192          160       USED
+  3   0x000002a0  544          512       USED
+  4   0x000004c0  2880         2848      FREE
+>> free 2
+  freed id 2
+  [##+....+###########.............................................]  # used  . free  + mixed
+>> free 4
+  freed id 4
+  [##+....+##+.....................................................]  # used  . free  + mixed
+>> bar
+  [##+....+##+.....................................................]  # used  . free  + mixed
+>> stats
++----------------- HEAP STATISTICS (first-fit) -----------------
+| heap size        : 4096 bytes
+| used (payload)   : 272 bytes in 2 blocks
+| free (payload)   : 3696 bytes in 2 blocks
+| header overhead  : 128 bytes
+| largest free blk : 3392 bytes
+| external frag.   : 8.2 %   (0% = all free space is one piece)
+| peak usage       : 1088 bytes
+| allocs/frees     : 4 / 2   failed allocs: 0   errors caught: 0
++--------------------------------------------------------------
+>> strategy best
+  strategy = best-fit
+>> alloc 140
+  id 5 -> offset 176, usable 144 bytes
+  [#####..+##+.....................................................]  # used  . free  + mixed
+>> free 1
+  freed id 1
+  [..+##..+##+.....................................................]  # used  . free  + mixed
+>> free 3
+  freed id 3
+  [..+##...........................................................]  # used  . free  + mixed
+>> bar
+  [..+##...........................................................]  # used  . free  + mixed
+>> stats
++----------------- HEAP STATISTICS (best-fit) -----------------
+| heap size        : 4096 bytes
+| used (payload)   : 144 bytes in 1 blocks
+| free (payload)   : 3856 bytes in 2 blocks
+| header overhead  : 96 bytes
+| largest free blk : 3744 bytes
+| external frag.   : 2.9 %   (0% = all free space is one piece)
+| peak usage       : 1088 bytes
+| allocs/frees     : 5 / 4   failed allocs: 0   errors caught: 0
++--------------------------------------------------------------
+>> alloc 16
+  id 6 -> offset 32, usable 16 bytes
+  [+.+##...........................................................]  # used  . free  + mixed
+>> overflow 5
+  wrote past the end of id 5 (smashed next block's header). Now type 'check'.
+>> check
+[allocator] block size larger than heap
+  HEAP CORRUPTED: 1 problem(s) found. Type 'reset' to start over.
+>> alloc 16
+[allocator] malloc refused: heap corrupted, re-init needed
+  allocation of 16 bytes FAILED (out of memory, too fragmented, or heap corrupted)
+  [+.+##...........................................................]  # used  . free  + mixed
+>> tamper-free 5
+[allocator] free refused: heap not initialised or corrupted
+[allocator] free refused: heap not initialised or corrupted
+  [+.+##...........................................................]  # used  . free  + mixed
+>> reset
+  new heap created
+  [................................................................]  # used  . free  + mixed
+>> alloc 64
+  id 1 -> offset 32, usable 64 bytes
+  [#+..............................................................]  # used  . free  + mixed
+>> tamper-free 1
+[allocator] free: block already free (DOUBLE FREE detected)
+  [................................................................]  # used  . free  + mixed
+>> check
+  heap OK: all invariants hold
+>> leaks
+  No leaks: every allocated block was freed.

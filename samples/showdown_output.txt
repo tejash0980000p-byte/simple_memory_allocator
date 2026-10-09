@@ -1,0 +1,26 @@
+
+STRATEGY SHOWDOWN: four free holes (112, 304, 160, 512 bytes) separated by
+small used blocks. Where does a 140-byte request land?
+
+--- first-fit ---
+  before:  [..+.....+...+........+##########################################]  # used  . free  + mixed
+  after :  [..+##+..+...+........+##########################################]  # used  . free  + mixed
+  -> placed at heap offset 224 (hole #2, 304 B: first one big enough)
+
+--- next-fit ---
+  before:  [..+.....+...+........+##########################################]  # used  . free  + mixed
+  after :  [..+##+..+...+........+##########################################]  # used  . free  + mixed
+  -> placed at heap offset 224 (hole #2, 304 B: first one big enough)
+
+--- best-fit ---
+  before:  [..+.....+...+........+##########################################]  # used  . free  + mixed
+  after :  [..+.....+###+........+##########################################]  # used  . free  + mixed
+  -> placed at heap offset 608 (hole #3, 160 B: tightest fit, least waste)
+
+--- worst-fit ---
+  before:  [..+.....+...+........+##########################################]  # used  . free  + mixed
+  after :  [..+.....+...###+.....+##########################################]  # used  . free  + mixed
+  -> placed at heap offset 848 (hole #4, 512 B: biggest hole)
+
+Take-away: best-fit wastes least now but leaves tiny useless slivers;
+worst-fit keeps big leftovers but destroys the big holes. See 'make bench'.
